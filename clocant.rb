@@ -36,7 +36,7 @@ class Clocant < Net::IRC::Client
   def google_search(message)
 
     #googleSearch
-    word = message.toutf8.sub('c g ','')
+    word = message.toutf8.sub('C g ','')
     url = "#{API}#{CGI.escape(word)}"
     html = open(url).read
     #p html
@@ -118,7 +118,7 @@ class Clocant < Net::IRC::Client
   end
 
   def karma(message)
-    name = message.gsub('c k ','')
+    name = message.gsub('C k ','')
     file = File.open('backup.yml','r')
 
     hash = YAML.load(file)
@@ -218,14 +218,14 @@ class Clocant < Net::IRC::Client
     if message=='wozozohouse'
       wozozohouse
     end
-    if message[0,4] == 'c g '
+    if message[0,4] == 'C g '
       google_search(message)
       puts message		
       # post NOTICE,channel,'VIP'
     elsif message.include?('++') || message.include?('--')
       incdec(message)
 
-    elsif message[0,4] == 'c k '
+    elsif message[0,4] == 'C k '
       karma(message)
     end 
     if message[0,5] == 'twit '
