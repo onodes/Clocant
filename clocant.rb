@@ -49,6 +49,7 @@ class Clocant < Net::IRC::Client
   
      result.each{|element|
        ans = "[" + element.inner_text.to_s + "] " + element["href"]
+       puts ans
        post NOTICE ,channel, ans
      }
 
