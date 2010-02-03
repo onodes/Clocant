@@ -51,7 +51,7 @@ class Clocant < Net::IRC::Client
      result.each{|element|
        ans = "[" + element.inner_text.to_s + "] " + element["href"]
        pp ans
-       post NOTICE ,channel, ans
+       post NOTICE ,channel, ans.to_s.toutf8
      }
 
 
