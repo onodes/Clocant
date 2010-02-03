@@ -13,7 +13,7 @@ require 'yaml'
 require 'pit'
 #require 'githubcommit'
 
-class Prelocant < Net::IRC::Client
+class clocant < Net::IRC::Client
 
 
   API = "http://www.google.co.jp/search?num=3&lr=lang_ja&oe=utf-8&q="	
@@ -36,29 +36,40 @@ class Prelocant < Net::IRC::Client
   def google_search(message)
 
     #googleSearch
-    word = message.toutf8.sub('pre g ','')
+    word = message.toutf8.sub('c g ','')
     url = "#{API}#{CGI.escape(word)}"
     html = open(url).read
     #p html
     doc = Hpricot(html)
     #p doc
-    result = doc / 'li.g'
+    result = doc / 'li.g/h3.r/a.l'
     puts result
     #out = []
-    i = 1
-    result.each_with_index{|div,idx|
-      break if i==4
-      next if div.attributes['style']
-      link = div.at 'a'
-      text = CGI.unescapeHTML(link.inner_html.gsub(%r!<b>([^<]*)</b>!) {$1})
-      href = link[:href]
-      out = "#{text} #{href}"
-      #pp out
-      puts out
-      puts '\n' * 3
-      post NOTICE, @channel, out.gsub('<em>','').gsub('</em>','').tojis
-      i += 1
-    }
+  #  i = 1
+  
+     result.each{|element|
+       ans = "[" + element.inner_text.to_s + "] " + element["href"]
+       post NOTICE ,channnel, ans
+     }
+
+
+
+    #   result.each_with_index{|div,idx|
+    #    break if i==4
+    #   next if div.attributes['style']
+    #   link = div.at 'a'
+    #  text = CGI.unescapeHTML(link.inner_html.gsub(%r!<b>([^<]*)</b>!) {$1})
+    #  href = link[:href]
+    #  out = "#{text} #{href}"
+    #pp out
+    #  puts out
+    #  puts '\n' * 3
+    #  post NOTICE, @channel, out.gsub('<em>','').gsub('</em>','').tojis
+    #  i += 1
+
+
+    #}
+
 
     #ans = ""
     #out.each{|data|
@@ -107,7 +118,7 @@ class Prelocant < Net::IRC::Client
   end
 
   def karma(message)
-    name = message.gsub('pre k ','')
+    name = message.gsub('c k ','')
     file = File.open('backup.yml','r')
 
     hash = YAML.load(file)
@@ -118,16 +129,16 @@ class Prelocant < Net::IRC::Client
       dec = hash[name][1]
       post NOTICE,@channel, "#{name}: #{inc-dec}(#{inc}++ #{dec}--)"  
     else
-      post NOTICE,@channel, "prelocantには、まだ登録されてないよ".tojis
+      post NOTICE,@channel, "clocantには、まだ登録されてないよ".tojis
     end
     file.close
   end	
 
   def twit(message,m)
     message = message.gsub("twit ","")
-    httpauth = Twitter::HTTPAuth.new("prelocant","1shi7abe")
+    httpauth = Twitter::HTTPAuth.new("clocant","1shi7abe")
     twit = Twitter::Base.new(httpauth)
-    twit.update ("#{m.prefix.nick} : #{message}")
+    twit.update ("#{m.cfix.nick} : #{message}")
   end
 
   def flesh(message)
@@ -190,10 +201,10 @@ class Prelocant < Net::IRC::Client
   def time(message)
     post NOTICE,@channel,Time.now.to_s
   end
-  
-   def localwiki(message)
-     post NOTICE,@channel,"http://www.local.or.jp/members/"
-   end
+
+  def localwiki(message)
+    post NOTICE,@channel,"http://www.local.or.jp/members/"
+  end
 
   def message_func(message,m)
     #post NOTICE,@channel,'ふひひ'.tojis 
@@ -207,14 +218,14 @@ class Prelocant < Net::IRC::Client
     if message=='wozozohouse'
       wozozohouse
     end
-    if message[0,6] == 'pre g '
+    if message[0,4] == 'c g '
       google_search(message)
       puts message		
       # post NOTICE,channel,'VIP'
     elsif message.include?('++') || message.include?('--')
       incdec(message)
 
-    elsif message[0,6] == 'pre k '
+    elsif message[0,4] == 'c k '
       karma(message)
     end 
     if message[0,5] == 'twit '
@@ -227,17 +238,17 @@ class Prelocant < Net::IRC::Client
       puts "OKAZU"
       av(message)
     end  
-    #    if m.prefix.nick == 'locant' && 0==( /\w*:\s[+-]*\d*\s[(]\d*[+]*\s\d*[-]*[)]/ =~ message)
-    if  (m.prefix.nick == 'locant' || m.prefix.nick == "onodes") && 0==( /\w*:\s[+-]*\d*\s[(]\d*[+]*\s\d*[-]*[)]/ =~ message)
+    #    if m.cfix.nick == 'locant' && 0==( /\w*:\s[+-]*\d*\s[(]\d*[+]*\s\d*[-]*[)]/ =~ message)
+    if  (m.cfix.nick == 'locant' || m.prefix.nick == "onodes") && 0==( /\w*:\s[+-]*\d*\s[(]\d*[+]*\s\d*[-]*[)]/ =~ message)
       backup(message)  
-      #post NOTICE, @channel, "prelocant backup test"
+      #post NOTICE, @channel, "clocant backup test"
     end 
 
 
-    if message.include?('help') && message.include?('prelocant')
+    if message.include?('help') && message.include?('clocant')
       post NOTICE,@channel, "g *** : google検索".tojis
       post NOTICE,@channel, 'k name : karma for **'.tojis
-      post NOTICE,@channel, 'twit *** : to twitter ID:prelocant'.tojis
+      post NOTICE,@channel, 'twit *** : to twitter ID:clocant'.tojis
       post NOTICE,@channel, "flesh name: fleshtwitter's URL".tojis
     end
 
@@ -270,11 +281,11 @@ class Prelocant < Net::IRC::Client
 
     message = m.params[1].to_s
     #message = *m.to_s
-    #    if message == "pre g onodes"
+    #    if message == "c g onodes"
     #     post NOTICE,@channel,"test"
     #   end
     puts "mmmmmmmmmmmmmmm======"
-    p m.prefix.nick
+    p m.cfix.nick
     message_func(message.toutf8,m)
     #	post NOTICE,channel,'VIP'
     puts "-"*10
@@ -284,9 +295,9 @@ class Prelocant < Net::IRC::Client
 end
 
 
-client1 = Prelocant.new("localhost", 6668,{:nick => "prelocant", :user => "prelocant", :real => "prelocant",:channel => "#SAMIT" , :pass => Pit.get("clocant")["pass"]})
+#client1 = clocant.new("localhost", 6668,{:nick => "prelocant", :user => "prelocant", :real => "prelocant",:channel => "#SAMIT" , :pass => Pit.get("clocant")["pass"]})
 
 
 
-client1.start
+#client1.start
 
