@@ -37,6 +37,7 @@ class Clocant < Net::IRC::Client
 
     #googleSearch
     word = message.toutf8.sub('C g ','')
+    pp word
     url = "#{API}#{CGI.escape(word)}"
     html = open(url).read
     #p html
@@ -49,7 +50,7 @@ class Clocant < Net::IRC::Client
   
      result.each{|element|
        ans = "[" + element.inner_text.to_s + "] " + element["href"]
-       puts ans
+       pp ans
        post NOTICE ,channel, ans
      }
 
