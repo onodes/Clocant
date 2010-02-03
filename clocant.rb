@@ -13,7 +13,7 @@ require 'yaml'
 require 'pit'
 #require 'githubcommit'
 
-class clocant < Net::IRC::Client
+class Clocant < Net::IRC::Client
 
 
   API = "http://www.google.co.jp/search?num=3&lr=lang_ja&oe=utf-8&q="	
@@ -138,7 +138,7 @@ class clocant < Net::IRC::Client
     message = message.gsub("twit ","")
     httpauth = Twitter::HTTPAuth.new("clocant","1shi7abe")
     twit = Twitter::Base.new(httpauth)
-    twit.update ("#{m.cfix.nick} : #{message}")
+    twit.update ("#{m.prefix.nick} : #{message}")
   end
 
   def flesh(message)
@@ -239,7 +239,7 @@ class clocant < Net::IRC::Client
       av(message)
     end  
     #    if m.cfix.nick == 'locant' && 0==( /\w*:\s[+-]*\d*\s[(]\d*[+]*\s\d*[-]*[)]/ =~ message)
-    if  (m.cfix.nick == 'locant' || m.prefix.nick == "onodes") && 0==( /\w*:\s[+-]*\d*\s[(]\d*[+]*\s\d*[-]*[)]/ =~ message)
+    if  (m.prefix.nick == 'locant' || m.prefix.nick == "onodes") && 0==( /\w*:\s[+-]*\d*\s[(]\d*[+]*\s\d*[-]*[)]/ =~ message)
       backup(message)  
       #post NOTICE, @channel, "clocant backup test"
     end 
@@ -285,7 +285,7 @@ class clocant < Net::IRC::Client
     #     post NOTICE,@channel,"test"
     #   end
     puts "mmmmmmmmmmmmmmm======"
-    p m.cfix.nick
+    p m.prefix.nick
     message_func(message.toutf8,m)
     #	post NOTICE,channel,'VIP'
     puts "-"*10
@@ -295,9 +295,9 @@ class clocant < Net::IRC::Client
 end
 
 
-#client1 = clocant.new("localhost", 6668,{:nick => "prelocant", :user => "prelocant", :real => "prelocant",:channel => "#SAMIT" , :pass => Pit.get("clocant")["pass"]})
+client1 = Clocant.new("localhost", 6668,{:nick => "prelocant", :user => "prelocant", :real => "prelocant",:channel => "#SAMIT" , :pass => Pit.get("clocant")["pass"]})
 
 
 
-#client1.start
+client1.start
 
