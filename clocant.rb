@@ -15,7 +15,6 @@ require 'pit'
 
 class Clocant < Net::IRC::Client
 
-
   API = "http://www.google.co.jp/search?num=3&lr=lang_ja&oe=utf-8&q="	
   def buzztter(message)
     url = "http://buzztter.com/ja"
@@ -225,7 +224,7 @@ class Clocant < Net::IRC::Client
       puts message		
       # post NOTICE,channel,'VIP'
     elsif message.include?('++') || message.include?('--')
-      incdec(message)
+      #incdec(message)
 
     elsif message[0,3] == 'Ck '
       karma(message)
