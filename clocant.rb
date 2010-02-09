@@ -45,13 +45,13 @@ class Clocant < Net::IRC::Client
     result = doc / 'li.g/h3.r/a.l'
     puts result
     #out = []
-  #  i = 1
-  
-     result.each{|element|
-       ans = "[" + element.inner_text.to_s + "] " + element["href"]
-       pp ans
-       post NOTICE ,@channel, ans.tojis
-     }
+    #  i = 1
+
+    result.each{|element|
+      ans = "[" + element.inner_text.to_s + "] " + element["href"]
+      pp ans
+      post NOTICE ,@channel, ans.tojis
+    }
 
 
 
@@ -223,7 +223,7 @@ class Clocant < Net::IRC::Client
       google_search(message)
       puts message		
       # post NOTICE,channel,'VIP'
-    elsif message.include?('++') || message.include?('--')
+      #elsif message.include?('++') || message.include?('--')
       #incdec(message)
 
     elsif message[0,3] == 'Ck '
@@ -240,59 +240,59 @@ class Clocant < Net::IRC::Client
       av(message)
     end  
     #    if m.cfix.nick == 'locant' && 0==( /\w*:\s[+-]*\d*\s[(]\d*[+]*\s\d*[-]*[)]/ =~ message)
-    if  (m.prefix.nick == 'locant' || m.prefix.nick == "onodes") && 0==( /\w*:\s[+-]*\d*\s[(]\d*[+]*\s\d*[-]*[)]/ =~ message)
-      backup(message)  
-      #post NOTICE, @channel, "clocant backup test"
-    end 
+    #    if  (m.prefix.nick == 'locant' || m.prefix.nick == "onodes") && 0==( /\w*:\s[+-]*\d*\s[(]\d*[+]*\s\d*[-]*[)]/ =~ message)
+    #      backup(message)  
+    #post NOTICE, @channel, "clocant backup test"
+ # end 
 
 
-    if message.include?('help') && message.include?('clocant')
-      post NOTICE,@channel, "g *** : google検索".tojis
-      post NOTICE,@channel, 'k name : karma for **'.tojis
-      post NOTICE,@channel, 'twit *** : to twitter ID:clocant'.tojis
-      post NOTICE,@channel, "flesh name: fleshtwitter's URL".tojis
-    end
-
-    if message[0,8] == 'buzztter'
-      buzztter(message)
-    end
-    p message
-
-    if message[0,4] == 'map '
-      map(message)
-    end
-
-    if message == 'localwiki'
-      localwiki(message)
-    end
-  end	
-  def on_rpl_welcome(m)
-    hash_make
-    post JOIN, opts.channel
+  if message.include?('help') && message.include?('clocant')
+    post NOTICE,@channel, "g *** : google検索".tojis
+    post NOTICE,@channel, 'k name : karma for **'.tojis
+    post NOTICE,@channel, 'twit *** : to twitter ID:clocant'.tojis
+    post NOTICE,@channel, "flesh name: fleshtwitter's URL".tojis
   end
 
-  def on_message(m)
-    @channel=m.params[0].to_s.toutf8
-    # if Time.now.min == 0 || Time.now.min == 30
-    #   github = GitAtom2.new   
-    #   github.check.each{|date|
-    #     post NOTICE, "#LOCAL-students@ircnet", date
-    #   }
-    # end
-
-    message = m.params[1].to_s
-    #message = *m.to_s
-    #    if message == "c g onodes"
-    #     post NOTICE,@channel,"test"
-    #   end
-    puts "mmmmmmmmmmmmmmm======"
-    p m.prefix.nick
-    message_func(message.toutf8,m)
-    #	post NOTICE,channel,'VIP'
-    puts "-"*10
-    p message.toutf8
-    puts "-"*5
+  if message[0,8] == 'buzztter'
+    buzztter(message)
   end
+  p message
+
+  if message[0,4] == 'map '
+    map(message)
+  end
+
+  if message == 'localwiki'
+    localwiki(message)
+  end
+end	
+def on_rpl_welcome(m)
+  hash_make
+  post JOIN, opts.channel
+end
+
+def on_message(m)
+  @channel=m.params[0].to_s.toutf8
+  # if Time.now.min == 0 || Time.now.min == 30
+  #   github = GitAtom2.new   
+  #   github.check.each{|date|
+  #     post NOTICE, "#LOCAL-students@ircnet", date
+  #   }
+  # end
+
+  message = m.params[1].to_s
+  #message = *m.to_s
+  #    if message == "c g onodes"
+  #     post NOTICE,@channel,"test"
+  #   end
+  puts "mmmmmmmmmmmmmmm======"
+  p m.prefix.nick
+  message_func(message.toutf8,m)
+  #	post NOTICE,channel,'VIP'
+  puts "-"*10
+  p message.toutf8
+  puts "-"*5
+end
 end
 
 
