@@ -35,7 +35,7 @@ class Clocant < Net::IRC::Client
   def google_search(message)
 
     #googleSearch
-    word = message.toutf8.sub('Cg ','')
+    word = message.toutf8.sub('g ','')
     pp word
     url = "#{API}#{CGI.escape(word)}"
     html = open(url).read
@@ -50,7 +50,13 @@ class Clocant < Net::IRC::Client
     result.each{|element|
       ans = "[" + element.inner_text.to_s + "] " + element["href"]
       pp ans
-      post NOTICE ,@channel, ans.tojis
+      if @channel.include?('freenode')
+        post NOTICE ,@channel, ans.toutf8
+        puts 'FREENODE'*10
+      elsif @channel.include?('ircnet')
+
+        post NOTICE ,@channel, ans.tojis
+      end
     }
 
 
@@ -207,7 +213,22 @@ class Clocant < Net::IRC::Client
     post NOTICE,@channel,"http://www.local.or.jp/members/"
   end
 
+  def check1get
+    p date = Time.now.year.to_s + Time.now.strftime("%m") + Time.now.strftime("%d")
+    begin
+        p  file = open("http://morse.cycleof5th.com/~luna/irclog/log_" + date + ".txt" , :http_basic_authentication=>["memberwww","1shi7abe"])
+         3.times{
+           post NOTICE, @channel, file.gets.tojis
+         }
+    rescue
+        post NOTICE,@channel,"check1get's ERROR couldn't access logger"
+    end
+  end  
+
   def message_func(message,m)
+    if message[0,9] == "check1get"
+      check1get
+    end 
     #post NOTICE,@channel,'ふひひ'.tojis 
     if message[0,4]=="time"
       time(message)
@@ -219,7 +240,7 @@ class Clocant < Net::IRC::Client
     if message=='wozozohouse'
       wozozohouse
     end
-    if message[0,3] == 'Cg '
+    if message[0,2] == 'g '
       google_search(message)
       puts message		
       # post NOTICE,channel,'VIP'
@@ -243,60 +264,60 @@ class Clocant < Net::IRC::Client
     #    if  (m.prefix.nick == 'locant' || m.prefix.nick == "onodes") && 0==( /\w*:\s[+-]*\d*\s[(]\d*[+]*\s\d*[-]*[)]/ =~ message)
     #      backup(message)  
     #post NOTICE, @channel, "clocant backup test"
- # end 
+    # end 
 
 
-  if message.include?('help') && message.include?('clocant')
-    post NOTICE,@channel, "g *** : google検索".tojis
-    post NOTICE,@channel, 'k name : karma for **'.tojis
-    post NOTICE,@channel, 'twit *** : to twitter ID:clocant'.tojis
-    post NOTICE,@channel, "flesh name: fleshtwitter's URL".tojis
+    if message.include?('help') && message.include?('clocant')
+      post NOTICE,@channel, "g *** : google検索".tojis
+      post NOTICE,@channel, 'k name : karma for **'.tojis
+      post NOTICE,@channel, 'twit *** : to twitter ID:clocant'.tojis
+      post NOTICE,@channel, "flesh name: fleshtwitter's URL".tojis
+    end
+
+    if message[0,8] == 'buzztter'
+      buzztter(message)
+    end
+    p message
+
+    if message[0,4] == 'map '
+      map(message)
+    end
+
+    if message == 'localwiki'
+      localwiki(message)
+    end
+  end	
+  def on_rpl_welcome(m)
+    hash_make
+    post JOIN, opts.channel
   end
 
-  if message[0,8] == 'buzztter'
-    buzztter(message)
-  end
-  p message
+  def on_message(m)
+    @channel=m.params[0].to_s.toutf8
+    # if Time.now.min == 0 || Time.now.min == 30
+    #   github = GitAtom2.new   
+    #   github.check.each{|date|
+    #     post NOTICE, "#LOCAL-students@ircnet", date
+    #   }
+    # end
 
-  if message[0,4] == 'map '
-    map(message)
+    message = m.params[1].to_s
+    #message = *m.to_s
+    #    if message == "c g onodes"
+    #     post NOTICE,@channel,"test"
+    #   end
+    puts "mmmmmmmmmmmmmmm======"
+    p m.prefix.nick
+    message_func(message.toutf8,m)
+    #	post NOTICE,channel,'VIP'
+    puts "-"*10
+    p message.toutf8
+    puts "-"*5
   end
-
-  if message == 'localwiki'
-    localwiki(message)
-  end
-end	
-def on_rpl_welcome(m)
-  hash_make
-  post JOIN, opts.channel
 end
 
-def on_message(m)
-  @channel=m.params[0].to_s.toutf8
-  # if Time.now.min == 0 || Time.now.min == 30
-  #   github = GitAtom2.new   
-  #   github.check.each{|date|
-  #     post NOTICE, "#LOCAL-students@ircnet", date
-  #   }
-  # end
 
-  message = m.params[1].to_s
-  #message = *m.to_s
-  #    if message == "c g onodes"
-  #     post NOTICE,@channel,"test"
-  #   end
-  puts "mmmmmmmmmmmmmmm======"
-  p m.prefix.nick
-  message_func(message.toutf8,m)
-  #	post NOTICE,channel,'VIP'
-  puts "-"*10
-  p message.toutf8
-  puts "-"*5
-end
-end
-
-
-client1 = Clocant.new("localhost", 6668,{:nick => "prelocant", :user => "prelocant", :real => "prelocant",:channel => "#SAMIT" , :pass => Pit.get("clocant")["pass"]})
+client1 = Clocant.new("localhost", 6669,{:nick => "prelocant", :user => "prelocant", :real => "prelocant",:channel => "#SAMIT" , :pass => Pit.get("clocant")["pass"]})
 
 
 
